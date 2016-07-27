@@ -14,31 +14,37 @@
        http://www.springframework.org/schema/mvc 
        http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
 
-	<!-- 启用spring mvc 注解 -->
-	<!-- <context:annotation-config /> -->
+	<!-- Controller方法调用规则定义 -->
+	<bean id="paraMethodResolver"
+		class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+		<property name="paramName" value="action" />
+		<property name="defaultMethodName" value="list" />
+	</bean>
 
-	<!-- 加载此配置文件的时候去扫描哪些类 -->
-	<context:component-scan base-package="com.spoc.action" />
+	<!-- 页面View层基本信息设定 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<!--<property name="prefix" value="/myjsp/"/> -->
+		<property name="suffix" value=".jsp" />
+	</bean>
 
-	<bean id="loginController" class="com.spoc.action.LoginController" />
-
-	<bean id="handlerMapping"
+	<!-- servlet映射列表,所有控制层Controller的servlet在这里定义 -->
+	<!-- prop标签中的key都是url值，后面的为BeanID如果我们在地址栏中输入的url 与key匹配，则分发到prop标签中指定的beanID所指定的Controller -->
+	<bean id="urlMapping"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<props>
-				<prop key="/login.do">loginController</prop>
+				<prop key="login.do">userController</prop>
 			</props>
 		</property>
 	</bean>
 
-	<!-- 对模型视图名称的解析，在请求时模型视图名称添加前后缀 。prefix：前缀， suffix：后缀 -->
-	<bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 
-		<property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView" />
-		<!-- <property name="prefix" value="/jsp/" /> -->
-		<property name="suffix" value=".jsp" />
+	<bean id="userController" class="com.spoc.action.UserController"
+		scope="singleton">
+		<property name="userService" ref="userService"></property>
 	</bean>
 
 </beans>
